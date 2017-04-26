@@ -33,7 +33,7 @@ allScrapedData <- data.frame(HomeCare=character())
 
 #Find the address box and enter your search criteria
 Address <- remDr$findElement("css selector","#address-basic")
-Addr <- "Philadelphia, PA, United States"
+Addr <- "Philadelphia"
 Address$sendKeysToElement(list(Addr, ''))
 Address$sendKeysToElement(list(key = 'tab'))
 
@@ -46,6 +46,10 @@ Unit$sendKeysToElement(list(key = 'enter'))
 #Select children's ages 0-5
 UTO <- remDr$findElement("xpath","//*[@id='address-carelevelUTO']")
 UTO$clickElement()
+
+#Checking each of the boxes indicates "and" instead of "or"
+#The data was run by checking each box, writing a csv for each,
+#combining the data and then removing duplicates
 
 TOT <- remDr$findElement("xpath","//*[@id='address-carelevelTOT']")
 TOT$clickElement()
@@ -68,21 +72,12 @@ FIV$clickElement()
 #Click enter -- will take a few minutes to load
 Address$sendKeysToElement(list(key = 'enter'))
 
+#--------------------------------------------------------------------------------------
+#This code takes the entire results list and exports it to Excel csv for further cleaning
 
 #Find library address value (the css selector for the table)
 HomeCare <- remDr$findElement("css selector","#results-list")
 HomeCare$getElementText()
-
-Next<- remDr$findElement("css selector","#results-list > nav > ul > li:nth-child(5) > a")
-Next$clickElement()
-
-#results-list.provider-item:nth-chil(1).street-address
-#results-list.provider-item:nth-chil(1).locality
-
-#paste("results-list.provider-item:nth-chil(",i,").locality")
-
-#$getElementAttribute(class)
-
 
 #Pull all addresses
 allScrapedData <- c(HomeCare$value)
@@ -96,3 +91,6 @@ write.csv(df1, file = "locations.csv")
 #Use Excel to remove carriage returns and replace it with commas
 #Then use text to columns (comma) to divide the values
 #=TRIM(SUBSTITUTE(SUBSTITUTE(B2,CHAR(13),""),CHAR(10),", ")
+
+
+#--------------------------------------------------------------------------------------
